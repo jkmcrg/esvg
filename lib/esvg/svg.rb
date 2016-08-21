@@ -345,10 +345,10 @@ module Esvg
         if data[:css]
           styles << css
         else
-          svg_css = data[:content].gsub(/</, '%3C') # escape <
-                                  .gsub(/>/, '%3E') # escape >
-                                  .gsub(/#/, '%23') # escape #
-                                  .gsub(/\n/,'')    # remove newlines
+          svg_css = data[:content].gsub(/</, '%3C')  # escape <
+                                  .gsub(/>/, '%3E')  # escape >
+                                  .gsub(/#/, '%23')  # escape #
+                                  .gsub(/[\n\r]/,'') # remove newlines
           styles << data[:css] = ".#{classname(name)} { background-image: url('data:image/svg+xml;utf-8,#{svg_css}'); }"
         end
       end
@@ -357,7 +357,7 @@ module Esvg
 
     def prep_svg(file, content)
       content = content.gsub(/<svg.+?>/, %Q{<svg class="#{classname(file)}" #{dimensions(content)}>})  # convert svg to symbols
-             .gsub(/\n/, '')                 # Remove endlines
+             .gsub(/[\n\r]/, '')             # Remove endlines
              .gsub(/\s{2,}/, ' ')            # Remove whitespace
              .gsub(/>\s+</, '><')            # Remove whitespace between tags
              .gsub(/style="([^"]*?)fill:(.+?);/m, 'fill="\2" style="\1')                   # Make fill a property instead of a style
@@ -395,7 +395,7 @@ module Esvg
       %Q{var esvg = {
   embed: function(){
     if (!document.querySelector('#esvg-symbols')) {
-      document.querySelector('body').insertAdjacentHTML('afterbegin', '#{html.gsub(/\n/,'').gsub("'"){"\\'"}}')
+      document.querySelector('body').insertAdjacentHTML('afterbegin', '#{html.gsub(/[\n\r]/,'').gsub("'"){"\\'"}}')
     }
   },
   icon: function(name, classnames) {
